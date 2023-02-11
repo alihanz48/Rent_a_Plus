@@ -1,0 +1,12 @@
+D:\.Software Projets\C#\Rent a Plus\Rent a Plus\bin\Debug\Rent a Plus.exe.config
+D:\.Software Projets\C#\Rent a Plus\Rent a Plus\bin\Debug\Rent a Plus.exe
+D:\.Software Projets\C#\Rent a Plus\Rent a Plus\bin\Debug\Rent a Plus.pdb
+D:\.Software Projets\C#\Rent a Plus\Rent a Plus\obj\Debug\Rent a Plus.csproj.AssemblyReference.cache
+D:\.Software Projets\C#\Rent a Plus\Rent a Plus\obj\Debug\Rent_a_Plus.Form1.resources
+D:\.Software Projets\C#\Rent a Plus\Rent a Plus\obj\Debug\Rent_a_Plus.Properties.Resources.resources
+D:\.Software Projets\C#\Rent a Plus\Rent a Plus\obj\Debug\Rent a Plus.csproj.GenerateResource.cache
+D:\.Software Projets\C#\Rent a Plus\Rent a Plus\obj\Debug\Rent a Plus.csproj.CoreCompileInputs.cache
+D:\.Software Projets\C#\Rent a Plus\Rent a Plus\obj\Debug\Rent a Plus.exe
+D:\.Software Projets\C#\Rent a Plus\Rent a Plus\obj\Debug\Rent a Plus.pdb
+D:\.Software Projets\C#\Rent a Plus\Rent a Plus\obj\Debug\Rent_a_Plus.Form2.resources
+D:\.Software Projets\C#\Rent a Plus\Rent a Plus\obj\Debug\Rent_a_Plus.Form3.resources
