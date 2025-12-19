@@ -13,6 +13,9 @@ namespace Rent_a_Plus
 {
     public partial class Form3 : Form
     {
+
+        /* Bu projeyi yazılıma başladığım ilk zamanlarda geliştirdim.Bu sebeple gereksiz kullanımlarım/hatalarım olabilir*/
+
         public Form3()
         {
             InitializeComponent();

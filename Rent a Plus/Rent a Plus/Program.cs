@@ -8,6 +8,8 @@ namespace Rent_a_Plus
 {
     static class Program
     {
+        /* Bu projeyi yazılıma başladığım ilk zamanlarda geliştirdim.Bu sebeple gereksiz kullanımlarım/hatalarım olabilir*/
+
         /// <summary>
         /// Uygulamanın ana girdi noktası.
         /// </summary>

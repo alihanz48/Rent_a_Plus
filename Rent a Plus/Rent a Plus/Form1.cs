@@ -13,14 +13,13 @@ using System.IO;
 namespace Rent_a_Plus
 {
     public partial class Form1 : Form
-    {
+    {   
+        /* Bu projeyi yazılıma başladığım ilk zamanlarda geliştirdim.Bu sebeple gereksiz kullanımlarım/hatalarım olabilir*/
+        
         public Form1()
         {
             InitializeComponent();
         }
-      /*-------------------------------------------------------------------------------------------
-        -------İlk büyük projem olduğu için gereksiz kullanımlarım ve hatalarım olabilir.----------
-        -------------------------------------------------------------------------------------------*/
         OleDbConnection baglanti = new OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=|DataDirectory|rentaplus.accdb");
         OleDbCommand komut = new OleDbCommand();
         string dgmtrh;
@@ -32,20 +31,34 @@ namespace Rent_a_Plus
             arackiralapanel.Location = new Point(label10.Location.X, label10.Location.Y);
             araclarpanel.Location= new Point(label10.Location.X, label10.Location.Y);
             aracteslimpanel.Location= new Point(label10.Location.X, label10.Location.Y);
-            foreach (var dsylr in Directory.GetFiles("images/dlt"))
+            try
             {
-                File.Delete(dsylr);
+                foreach (var dsylr in Directory.GetFiles("images/dlt"))
+                {
+                    File.Delete(dsylr);
+                }
             }
+            catch (Exception)
+            {
+
+            }
+            
             panel4.Location = new Point(panel1.Size.Width+((this.Size.Width-panel1.Size.Width-panel4.Size.Width)/2),10);
             dataGridView1.Location = new Point(panel1.Size.Width+((this.Size.Width-panel1.Size.Width-dataGridView1.Size.Width)/2),button2.Location.Y);
             panel6.Location = new Point(dataGridView1.Location.X,dataGridView1.Location.Y-panel6.Size.Height);
+
+            TopPanel();
             
+        }
+
+        private void TopPanel()
+        {
             OleDbDataReader oku;
 
             baglanti.Open();
             komut.Connection = baglanti;
             string bay = System.DateTime.Now.Month.ToString();
-            komut.CommandText = "SELECT Sum(kayitlar.para) AS Toplapara FROM kayitlar WHERE Month([kirabitis]) = "+bay+"; ";
+            komut.CommandText = "SELECT Sum(kayitlar.para) AS Toplapara FROM kayitlar WHERE Month([kirabitis]) = " + bay + "; ";
             oku = komut.ExecuteReader();
             while (oku.Read())
             {
@@ -80,6 +93,7 @@ namespace Rent_a_Plus
             aracteslimpanel.Size = new Size(0, 0);
             araclarpanel.Size = new Size(0, 0);
             temizle1();
+            TopPanel();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -591,46 +605,89 @@ namespace Rent_a_Plus
             }
         }
 
-        
+
         private void button12_Click(object sender, EventArgs e)
         {
-            if (listBox1.Items.Count>2)
+            if (listBox1.Items.Count > 2)
             {
-                arcteslimtrh();
-                int kbasy = Convert.ToInt32(kirabasd[6].ToString() + kirabasd[7].ToString() + kirabasd[8].ToString() + kirabasd[9].ToString());
-                int kbasa = Convert.ToInt32(kirabasd[3].ToString() + kirabasd[4].ToString());
-                int kbasg = Convert.ToInt32(kirabasd[0].ToString() + kirabasd[1].ToString());
-                int kbity = Convert.ToInt32(dateTimePicker3.Value.Year.ToString());
-                int kbita = Convert.ToInt32(dateTimePicker3.Value.Month.ToString());
-                int kbitg = Convert.ToInt32(dateTimePicker3.Value.Day.ToString());
-                DateTime kirabaslangic = new DateTime(kbasy, kbasa, kbasg);
-                DateTime aracteslim = new DateTime(kbity, kbita, kbitg);
-                TimeSpan gun = aracteslim - kirabaslangic;
-                int para = Convert.ToInt32(arcfyt) * Convert.ToInt32(gun.Days);
+                arcteslimtrh(); // muhtemelen kirabasd değerini ayarlıyor
 
-                string kbitg2 = (kbitg.ToString().Length == 1) ? ("0" + kbitg) : (kbitg.ToString());
-                string kbita2= (kbita.ToString().Length == 1) ? ("0" + kbita) : (kbita.ToString());
-                string kbity2= (kbity.ToString().Length == 1) ? ("0" + kbity) : (kbity.ToString());
-                baglanti.Open();
-                komut.Connection = baglanti;
-                komut.CommandText = "insert into kayitlar values('" + listBox4.Items[0] + "','" + listBox4.Items[1] + "','" + listBox4.Items[2] + "','" + listBox4.Items[3] + "','" + listBox4.Items[4] + "','" + listBox4.Items[5] + "','" + kbitg2+"."+kbita2+"."+kbity2 + "','" + listBox4.Items[7] + "','" + gun.Days.ToString() + "'," + para + ",'" + textBox6.Text + "')";
-                komut.ExecuteNonQuery();
-                komut.CommandText = "delete from kiralik where aracid='" + aracid + "' and id='" + textBox5.Text + "'";
-                komut.ExecuteNonQuery();
-                komut.CommandText = "update araclar set durum='bos' where id=" + aracid + "";
-                komut.ExecuteNonQuery();
-                baglanti.Close();
-                temizle1();
-                label33.Text = "Araç " + gun.Days.ToString() + " gün kirada kaldı.";
-                label34.Text = para + "TL kazanıldı";
-                MessageBox.Show("Araç teslim edildi");
+                // kirabasd artık güvenli bir şekilde DateTime olarak parse edilecek
+                if (!DateTime.TryParse(kirabasd, out DateTime kirabaslangic))
+                {
+                    MessageBox.Show("Kiralama başlangıç tarihi hatalı.");
+                    return;
+                }
+
+                DateTime aracteslim = dateTimePicker3.Value;
+
+                // Kiralanan gün sayısı
+                TimeSpan gun = aracteslim - kirabaslangic;
+
+                // Para hesabı
+                if (!int.TryParse(arcfyt, out int fiyat))
+                {
+                    MessageBox.Show("Araç fiyatı hatalı.");
+                    return;
+                }
+                int para = fiyat * gun.Days;
+
+                // Teslim tarihi formatlama
+                string kbitg2 = aracteslim.Day.ToString("D2");
+                string kbita2 = aracteslim.Month.ToString("D2");
+                string kbity2 = aracteslim.Year.ToString();
+
+                try
+                {
+                    baglanti.Open();
+                    komut.Connection = baglanti;
+
+                    // Kaydı ekle
+                    komut.CommandText = "INSERT INTO kayitlar VALUES('" +
+                        listBox4.Items[0] + "','" +
+                        listBox4.Items[1] + "','" +
+                        listBox4.Items[2] + "','" +
+                        listBox4.Items[3] + "','" +
+                        listBox4.Items[4] + "','" +
+                        listBox4.Items[5] + "','" +
+                        kbitg2 + "." + kbita2 + "." + kbity2 + "','" +
+                        listBox4.Items[7] + "','" +
+                        gun.Days.ToString() + "'," +
+                        para + ",'" +
+                        textBox6.Text + "')";
+                    komut.ExecuteNonQuery();
+
+                    // Kiralık tablosundan sil
+                    komut.CommandText = "DELETE FROM kiralik WHERE aracid='" + aracid + "' AND id='" + textBox5.Text + "'";
+                    komut.ExecuteNonQuery();
+
+                    // Aracın durumunu güncelle
+                    komut.CommandText = "UPDATE araclar SET durum='bos' WHERE id=" + aracid;
+                    komut.ExecuteNonQuery();
+
+                    baglanti.Close();
+
+                    // Formu temizle
+                    temizle1();
+
+                    // Bilgilendirme
+                    label33.Text = "Araç " + gun.Days.ToString() + " gün kirada kaldı.";
+                    label34.Text = para + " TL kazanıldı";
+                    MessageBox.Show("Araç teslim edildi");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Hata oluştu: " + ex.Message);
+                    if (baglanti.State == ConnectionState.Open)
+                        baglanti.Close();
+                }
             }
             else
             {
                 MessageBox.Show("Gerekli alanları doldurunuz.");
             }
-            
         }
+
 
         private void button4_Click(object sender, EventArgs e)
         {
